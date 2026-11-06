@@ -1,0 +1,12 @@
+# Install PyTorch first with the CUDA build for your GPU (RTX 50-series needs CUDA 12.8+):
+#   https://pytorch.org/get-started/locally/
+torch>=2.7
+torchvision>=0.22
+numpy
+pillow
+pyyaml
+tqdm
+matplotlib
+pytest
+gradio
+opencv-python

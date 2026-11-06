@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+.idea/
+
+
+data/
+runs/
+checkpoints/
+*.pth
+!weights/final.pth
+
+.DS_Store
+Thumbs.db
