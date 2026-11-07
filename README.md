@@ -38,6 +38,59 @@ I used a small PyTorch network that restyles any photo or webcam frame in four a
 - **TransformNet**: a feed-forward encoder
 - **Perceptual loss**: a frozen ImageNet VGG16 measures the content
 - 
+## Getting started - Written by Claude
+## I chose claude to help with this part because I needed my project to be easily run on other computers
+
+You need an NVIDIA graphics card, Python 3.11 or newer, and Git.
+
+**1. Download the project**
+
+```bash
+git clone <this repo's URL>
+cd <repo folder>
+```
+
+**2. Install PyTorch.** Go to https://pytorch.org/get-started/locally/, pick your system, and run the command it gives you. Pick a CUDA version that matches your graphics card (RTX 50-series cards need CUDA 12.8 or newer).
+
+**3. Install everything else**
+
+```bash
+pip install -r requirements.txt
+```
+
+If this fails on PyYAML (it can on very new Python versions), install PyYAML on its own first, then rerun the line above.
+
+Windows PowerShell:
+
+```powershell
+$env:PYYAML_FORCE_LIBYAML="0"; pip install pyyaml
+```
+
+Mac or Linux:
+
+```bash
+PYYAML_FORCE_LIBYAML=0 pip install pyyaml
+```
+
+**4. Check that your graphics card works**
+
+```bash
+python scripts/check_gpu.py
+```
+
+It should end with `PASS`.
+
+**5. Get the ingredients.** The model learns from three things:
+
+| Ingredient | Where it comes from | What you do |
+|---|---|---|
+| 4 paintings | Already in `styles/` (public domain, sources in `styles/SOURCES.md`) | Nothing |
+| 5,000 practice photos from the COCO dataset (about 780 MB) | Downloaded by a script into `data/coco/val2017/` | Run the command below |
+| The VGG16 "judge" network (about 530 MB) | Downloaded by PyTorch automatically the first time training runs | Nothing |
+
+```bash
+python scripts/download_coco.py
+```
 
 
 ## Training the model
