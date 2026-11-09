@@ -1,0 +1,43 @@
+# All settings for training, evaluation, and the app live here.
+# Checkpoints save a copy of this config so every result can be traced back.
+
+seed: 42
+
+data:
+  content_dir: data/coco/val2017   # COCO val2017 (~5,000 images, ~1 GB)
+  holdout: 200                     # images kept out of training for eval
+  image_size: 256                  # training crop size
+  num_workers: 4
+
+styles:
+  - name: starry_night
+    path: styles/starry_night.jpg
+  - name: great_wave
+    path: styles/great_wave.jpg
+  - name: the_scream
+    path: styles/the_scream.jpg
+  - name: composition_vii
+    path: styles/composition_vii.jpg
+style_size: 512                    # style images resized to this before Gram targets
+
+model:
+  channels: [32, 64, 128]
+  num_residual: 5
+  upsample: nearest                # "nearest" (resize-then-conv) or "transpose" (ablation)
+
+loss:
+  content_layer: relu2_2
+  style_layers: [relu1_2, relu2_2, relu3_3, relu4_3]
+  content_weight: 1.0e+5
+  style_weight: 1.0e+10
+  tv_weight: 1.0e-6
+
+train:
+  batch_size: 8
+  lr: 1.0e-3
+  iterations: 40000
+  log_every: 100
+  sample_every: 1000
+  checkpoint_every: 5000
+  amp: true                        # bf16 autocast for TransformNet; Gram math stays fp32
+  out_dir: runs/default
