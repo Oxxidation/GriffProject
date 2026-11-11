@@ -1,0 +1,42 @@
+seed: 42
+data:
+  content_dir: data/coco/val2017
+  holdout: 200
+  image_size: 256
+  num_workers: 4
+styles:
+- name: starry_night
+  path: styles/starry_night.jpg
+- name: great_wave
+  path: styles/great_wave.jpg
+- name: the_scream
+  path: styles/the_scream.jpg
+- name: composition_vii
+  path: styles/composition_vii.jpg
+style_size: 512
+model:
+  channels:
+  - 32
+  - 64
+  - 128
+  num_residual: 5
+  upsample: nearest
+loss:
+  content_layer: relu2_2
+  style_layers:
+  - relu1_2
+  - relu2_2
+  - relu3_3
+  - relu4_3
+  content_weight: 100000.0
+  style_weight: 30000000000.0
+  tv_weight: 1.0e-06
+train:
+  batch_size: 8
+  lr: 0.001
+  iterations: 40000
+  log_every: 100
+  sample_every: 1000
+  checkpoint_every: 5000
+  amp: true
+  out_dir: runs/style3e10_40k
