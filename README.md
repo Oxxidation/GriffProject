@@ -8,18 +8,18 @@ You give it a picture, say a photo of your dog. You pick an art style, for examp
 
 It knows four styles from 4 very famous paintings:
 
- Starry Night by Vincent van Gogh. This has thick swirls, deep blue and gold
- The Great Wave by Katsushika Hokusai. Japanese print, clean lines, blue and cream
- The Scream by Edvard Munch Uuneasy strokes in orange and dark blue 
- Composition VII by Wassily Kandinsky. Bright, chaotic, abstract color shapes
+- **Starry Night** by Vincent van Gogh. Thick swirls, deep blue and gold.
+- **The Great Wave** by Katsushika Hokusai. Japanese print, clean lines, blue and cream.
+- **The Scream** by Edvard Munch. Uneasy strokes in orange and dark blue.
+- **Composition VII** by Wassily Kandinsky. Bright, chaotic, abstract color shapes.
 
-**You can mix styles.** A slider blends two styles together, like 70% Van Gogh and 30% Hokusai, and you can watch the picture shift smoothly from one to the other. A second slider controls how strong the effect is
+**You can mix styles.** A slider blends two styles together, like 70% Van Gogh and 30% Hokusai, and you can watch the picture shift smoothly from one to the other. A second slider controls how strong the effect is.
 
 **It's fast enough for live video.** Point your webcam at yourself and you appear as a moving painting in real time.
 
 ## How it works
 
-**1. It learned by practice** I did not write instructions like "make brush strokes swirly." Instead, the program was shown about 5,000 everyday photos (food, people, streets, animals) and practiced repainting each one, over and over, getting a little better every time. After about 40 minutes of practice on a graphics card, it learned how to do it on its own.
+**1. It learned by practice** I did not write instructions like "make brush strokes swirly." Instead, the program was shown about 5,000 everyday photos (food, people, streets, animals) and practiced repainting each one, over and over, getting a little better every time. After about 32 minutes of practice on a graphics card, it learned how to do it on its own.
 
 **2. A "judge" graded every attempt.** To know whether a repainting was good, the project uses a second, already-trained image-recognition program (called VGG16.) It answers two questions about each attempt:
 - Is it still the same picture? Does the dog still look like a dog, in the same spot?
@@ -29,15 +29,19 @@ The painter program kept adjusting itself to score better on both questions at o
 
 **3. One painter has four styles.** Instead of training four separate programs, one program learned all four styles. Each style is stored as a small "settings card" the program swaps in.
 
-**4. Why it's fast.** The older way to do this works on one picture at a time and takes many seconds to minutes per image, because it starts from scratch every time. This project does the slow learning once, ahead of time. After that, painting a new picture is a single quick pass through the neural network which makes this fast enough for video. The project includes the older method too, so the two can be compared side by side.
+**4. Why it's fast.** The older way to do this works on one picture at a time and takes about 2.5 seconds per image on my graphics card, because it starts from scratch every time. Mine takes about 0.004 seconds, roughly 680 times faster. This project does the slow learning once, ahead of time. After that, painting a new picture is a single quick pass through the neural network which makes this fast enough for video. The project includes the older method too, so the two can be compared side by side.
 
 ## Technical Version of How it Works
 
 I used a small PyTorch network that restyles any photo or webcam frame in four art styles, with a blend slider between styles, served through a Gradio app.
 
-- **TransformNet**: a feed-forward encoder
-- **Perceptual loss**: a frozen ImageNet VGG16 measures the content
-- 
+- **TransformNet** (the painter, `src/styletransfer/model.py`): a feed-forward encoder (three convolutions, two of them stride 2), five residual blocks, and a decoder that upsamples with resize-then-convolution to avoid checkerboard artifacts. About 1.7 million parameters.
+- **Conditional instance normalization**: all four styles share the same convolution weights; each style only gets its own scale and shift vectors in every normalization layer. Blending two styles means mixing those vectors.
+- **Perceptual loss** (the judge, `vgg.py` and `losses.py`): a frozen ImageNet VGG16 measures content loss at `relu2_2` and style loss with Gram matrices at `relu1_2`, `relu2_2`, `relu3_3` and `relu4_3`, plus a small total-variation term for smoothness. Weights: content 1e5, style 3e10.
+- **Training** (`train.py`): 4,800 COCO val2017 photos as 256 px random crops, batch 8, Adam at learning rate 1e-3, 40,000 iterations with a random style per image, bf16 mixed precision. About 32 minutes on an RTX 5080.
+- **Baseline** (`gatys.py`): the Gatys et al. (2015) optimization method with the same judge and styles, for a fair speed and quality comparison.
+- **Results** (`eval.py`, full numbers in `report/figures/results.md`): 3.7 ms per frame at 256 px (272 fps), about 683x faster than Gatys, which still scores better on quality. Ablations show that one shared network beats four single-style networks at a quarter of the size, that style weight trades content for style as expected, and that transposed-convolution upsampling leaves a visible checkerboard even though the loss scores don't catch it.
+
 ## Getting started - Written by Claude
 ## I chose claude to help with this part because I needed my project to be easily run on other computers
 
