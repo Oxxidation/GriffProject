@@ -190,6 +190,14 @@ Swap in any photo and any style: `starry_night`, `great_wave`, `the_scream`, or 
 python app/app.py --checkpoint runs/my_model/checkpoint.pth
 ```
 
+**Step 9. Measure your model** (about 5 minutes)
+
+```bash
+python -m styletransfer.eval --models mine=runs/my_model/checkpoint.pth final=weights/final.pth --out runs/my_eval
+```
+
+This times each model, scores it on 200 photos it never trained on, runs the slow Gatys method for comparison, and draws image grids, a blend strip and training curves. Open `runs/my_eval/results.md` to see the numbers. The results for the shipped model are already in `report/figures/`.
+
 ### Experiments to try
 
 - **Stronger or milder style.** Change the style weight (the default is `3e10`; the first model used `1e10`, which came out milder):
@@ -212,7 +220,8 @@ python app/app.py --checkpoint runs/my_model/checkpoint.pth
 app/app.py               the web app
 configs/default.yaml     all training settings
 styles/                  the four paintings + SOURCES.md
-src/styletransfer/       data, vgg (the judge), losses, model (the painter), train, infer, gatys
+src/styletransfer/       data, vgg (the judge), losses, model (the painter), train, infer, gatys, eval
+report/figures/          evaluation results: speed and score tables, image grids, training curves
 scripts/                 check_gpu.py, download_coco.py
 tests/                   automatic checks
 weights/                 the trained model (final.pth) and its settings

@@ -1,0 +1,17 @@
+method,short_side_px,median_ms,fps
+final_3e10,256,3.68,271.7
+final_3e10,512,7.64,130.9
+final_3e10,720,16.16,61.9
+first_1e10,256,3.60,277.7
+first_1e10,512,7.61,131.4
+first_1e10,720,16.15,61.9
+strong_1e11,256,3.65,273.6
+strong_1e11,512,7.58,131.9
+strong_1e11,720,16.17,61.8
+transpose_3e10,256,3.49,286.2
+transpose_3e10,512,6.22,160.7
+transpose_3e10,720,13.00,76.9
+single_style_x4,256,3.71,269.9
+single_style_x4,512,7.46,134.0
+single_style_x4,720,16.13,62.0
+gatys,256,2513,0.40
