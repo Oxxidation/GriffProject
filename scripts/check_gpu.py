@@ -10,6 +10,7 @@ import time
 import torch
 import torch.nn.functional as F
 
+# THIS PART IS GENERATED ENTIRELY BY CLAUDE SO YOU DON'T CRASH YOUR COMPUTER
 
 def main() -> int:
     print(f"Python      {sys.version.split()[0]}")

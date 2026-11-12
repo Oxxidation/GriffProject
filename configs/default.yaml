@@ -29,7 +29,7 @@ loss:
   content_layer: relu2_2
   style_layers: [relu1_2, relu2_2, relu3_3, relu4_3]
   content_weight: 1.0e+5
-  style_weight: 1.0e+10
+  style_weight: 3.0e+10           # final model; 1e10 was the first, milder run
   tv_weight: 1.0e-6
 
 train:

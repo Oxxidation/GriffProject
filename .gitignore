@@ -14,3 +14,14 @@ checkpoints/
 
 .DS_Store
 Thumbs.db
+
+# Word / Office temporary files
+~$*
+*.tmp
+
+# Local tool settings
+.claude/
+
+# Personal notes, kept local
+DEVLOG.md
+STATUS_UPDATE.md

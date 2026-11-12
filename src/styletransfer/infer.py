@@ -29,7 +29,8 @@ class Stylizer:
         # weights_only=True refuses to run code hidden in a checkpoint file; ours
         # only holds tensors, strings, and numbers, so it loads fine.
         ckpt = torch.load(checkpoint, map_location=self.device, weights_only=True)
-        m = ckpt["config"]["model"]
+        self.config: dict = ckpt["config"]  # the exact settings this model was trained with
+        m = self.config["model"]
         self.styles: list[str] = ckpt["styles"]
         self.model = TransformNet(len(self.styles), tuple(m["channels"]), m["num_residual"], m["upsample"])
         self.model.load_state_dict(ckpt["model"])
@@ -38,6 +39,18 @@ class Stylizer:
         self.model.to(memory_format=torch.channels_last)
         self.use_bf16 = self.device.type == "cuda" and torch.cuda.is_bf16_supported()
         self.last_ms = 0.0
+
+    def warmup(self, sizes: tuple[int, ...] = (256, 384, 512, 720)) -> None:
+        """Run throwaway images so the first real one isn't slow.
+
+        The first call on a fresh process takes ~340 ms on the RTX 5080 while
+        CUDA loads its kernels; after that it is a few ms. Without this, the
+        first number a demo viewer sees would be wrong.
+        """
+        dummy = np.zeros((480, 640, 3), dtype=np.uint8)
+        for size in sizes:
+            for _ in range(2):
+                self.stylize(dummy, self.styles[0], size=size)
 
     def style_vector(self, style_a: str, style_b: str | None = None, alpha: float = 0.0) -> torch.Tensor:
         """Weights over all styles: (1 - alpha) of style A plus alpha of style B.

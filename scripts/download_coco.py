@@ -10,6 +10,8 @@ already there, so it is safe to rerun.
 The photos are not stored in the git repo: they are too large, and each one
 belongs to its Flickr photographer under the license listed by COCO
 (https://cocodataset.org/#termsofuse).
+
+THIS ENTIRE THING IS WRITTEN BY CLAUDE SO YOU DON'T HAVE TO FIND THE DATASET YOURSELF
 """
 import sys
 import urllib.request
